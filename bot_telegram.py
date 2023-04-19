@@ -1,3 +1,5 @@
+import string
+
 from aiogram import Bot, types
 # используется для улавливания событий происходящих в Telegram и связанных
 # с ботом (в чате, в который добавлен бот, непосредственно в диалоге с ботом)
@@ -5,7 +7,7 @@ from aiogram.dispatcher import Dispatcher
 # утилита для запуска работы бота
 from aiogram.utils import executor
 
-import os
+import os, json
 
 # существует 2 режима работы бота:
 # LongPolling - программа с ботом сама опрашивает сервер Telegram об имеющихся событиях
@@ -51,12 +53,18 @@ async def pizza_place_command(message: types.Message):
 
 @dp.message_handler()
 async def echo_send(message: types.Message):
-    await message.answer(message.text)
+    if {i.lower().translate(str.maketrans('', '', string.punctuation)) for i in message.text.split(' ')}\
+        .intersection(set(json.load(open('cenz.json')))) != set():
+        await message.reply('Маты запрещены')
+        await message.delete()
+    else:
+        await message.reply(message.text)
+    # await message.answer(message.text)
     # await message.reply(message.text)
     # бот отправляет сообщение в ЛС пользователя, но только если пользователь активировал этого бота
     # иначе вылетит исключение
     # await bot.send_message(message.from_user.id, message.text)
 
 
-# skip_updates - паараметр для игнорирования запросов поступивших боту, когда он был офлайн
+# skip_updates - параметр для игнорирования запросов поступивших боту, когда он был офлайн
 executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
