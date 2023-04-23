@@ -10,6 +10,7 @@ async def on_startup(_):
 from handlers import client, other, admin
 
 client.register_handlers_client(dp)
+admin.register_handlers_admin(dp)
 
 # должен быть последним, т.к. реагирует на все команды/сообщения
 other.register_handlers_other(dp)
