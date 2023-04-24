@@ -3,6 +3,7 @@ from aiogram.types import ReplyKeyboardRemove
 
 from create_bot import bot
 from keyboards import kb_client
+from database import sqlite_bd
 
 
 # строка ниже уже не нужна для регистрации функции в качестве обработчика сообщений
@@ -28,7 +29,13 @@ async def pizza_place_command(message: types.Message):
     await bot.send_message(message.from_user.id, 'ул. Колбасная д. 15', reply_markup=ReplyKeyboardRemove())
 
 
+# @dp.message_handler(commands='[Меню]')
+async def pizza_menu_command(message: types.Message):
+    await sqlite_bd.sql_read_all(message)
+
+
 def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(command_start, commands=['start', 'help'])
     dp.register_message_handler(pizza_open_command, commands=['Режим_работы'])
     dp.register_message_handler(pizza_place_command, commands=['Расположение'])
+    dp.register_message_handler(pizza_menu_command, commands=['Меню'])

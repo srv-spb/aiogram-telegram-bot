@@ -4,7 +4,8 @@ from aiogram.dispatcher.filters import Text
 from aiogram import types, Dispatcher
 
 from create_bot import bot
-
+from keyboards import admin_kb
+from database import sqlite_bd
 
 ID = None
 
@@ -25,7 +26,7 @@ async def make_changes_command(message: types.Message):
     global ID
     ID = message.from_user.id
     print(f'ID is {ID}')
-    await bot.send_message(message.from_user.id, 'Что хозяин надо???')
+    await bot.send_message(message.from_user.id, 'Что хозяин надо???', reply_markup=admin_kb.kb_admin)
     await message.delete()
 
 
@@ -85,6 +86,7 @@ async def load_price(message: types.Message, state=FSMContext):
         await message.reply(str(data))
     # после этой команды сбрасывается состояние у машины состояния
     # поэтому все манипуляции с данными необходимо выполнить до этой команды
+    await sqlite_bd.sql_add_command(state)
     await state.finish()
 
 

@@ -1,10 +1,12 @@
 # утилита для запуска работы бота
 from aiogram.utils import executor
 from create_bot import dp
+from database import sqlite_bd
 
 
 async def on_startup(_):
     print('Бот вышел в онлайн')
+    sqlite_bd.sql_start()
 
 
 from handlers import client, other, admin
