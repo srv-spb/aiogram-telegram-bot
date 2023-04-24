@@ -31,7 +31,6 @@ async def make_changes_command(message: types.Message):
 
 # @dp.message_handler(commands='Загрузить', state=None)
 async def cm_start(message: types.Message):
-    print(f'message.from_user.id is {message.from_user.id}')
     # установка машины состояния в состояние загрузки фото
     if message.from_user.id == ID:
         await FSMAdmin.photo.set()
@@ -89,6 +88,14 @@ async def load_price(message: types.Message, state=FSMContext):
     await state.finish()
 
 
+# для примера хэндлера с фильтром
+async def test_filter(message: types.Message):
+    # сохранение в контекст информацию о названии пиццы
+    await message.reply('passed message by filter')
+    # после этой команды сбрасывается состояние у машины состояния
+    # поэтому все манипуляции с данными необходимо выполнить до этой команды
+
+
 def register_handlers_admin(dp: Dispatcher):
     dp.register_message_handler(cm_start, commands=['Загрузить'], state=None)
     dp.register_message_handler(cancel_handler, state="*", commands='отмена')
@@ -98,3 +105,5 @@ def register_handlers_admin(dp: Dispatcher):
     dp.register_message_handler(load_description, state=FSMAdmin.description)
     dp.register_message_handler(load_price, state=FSMAdmin.price)
     dp.register_message_handler(make_changes_command, commands=['moderator'], is_chat_admin=True)
+    # добавление хэндлера с фильтром сообщений начинающихся с hello
+    dp.register_message_handler(test_filter, lambda message: message.text.startswith('hello'))
